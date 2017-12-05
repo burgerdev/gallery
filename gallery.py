@@ -32,8 +32,8 @@ _gallery_template = """
 </html>
 """
 
-_link_template =
-"""<tr><td>{prefix}</td><td><a href="{target}">{name}</td></tr>"""
+_link_template = \
+    """<tr><td>{prefix}</td><td><a href="{target}">{name}</td></tr>"""
 
 _index = "index.html"
 
@@ -56,21 +56,21 @@ def listing(d, site="Gallery", back=True):
         back = """<p><a href="../index.html">Back</a></p>"""
     else:
         back = ""
-    items = (itemize(f) for f in glob.glob(os.path.join(d, "*")))
+    items = (itemize(f) for f in sorted(glob.glob(os.path.join(d, "*"))))
     return _listing_template.format(
         site=site, dir=os.path.basename(d), items="\n".join(items), back=back)
 
 
 def gallerize(f):
     name = os.path.basename(f)
-    big = name.rstrip("small.jpg")
+    big = name.rsplit(".medium.jpg")[0]
     return "<a href={big}><img src={name} /></a>".format(big=big, name=name)
 
 
 def gallery(d, site="Gallery"):
     assert(os.path.isdir(d))
     back = """<p><a href="../index.html">Back</a></p>"""
-    items = (gallerize(f) for f in glob.glob(os.path.join(d, "*.small.jpg")))
+    items = (gallerize(f) for f in sorted(glob.glob(os.path.join(d, "*.medium.jpg"))))
     return _gallery_template.format(
         site=site, dir=os.path.basename(d), items="\n".join(items), back=back)
 
