@@ -4,6 +4,7 @@
   "artifact": "https://github.com/burgerdev/gallery.git",
   "pkgs": [
     "lang/python3",
+    "graphics/vips",
     "www/nginx"
   ],
   "packagesite": "https://pkg.freebsd.org/FreeBSD:11:amd64/quarterly",
