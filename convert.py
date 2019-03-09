@@ -8,8 +8,7 @@ from collections import defaultdict
 
 _filename_re = re.compile(r"([0-9]{4})([0-9]{2}).*")
 _conversion = "vips resize '{src}' '{dst}' {scale:.03f}"
-_copy = "ln '{src}' '{dst}'"
-
+_copy = "{cp} '{src}' '{dst}'"
 
 
 def name_to_dict(name):
@@ -29,8 +28,9 @@ def convert(src, dst, scale):
     os.system(cmd)
 
 
-def copy(src, dst):
-    os.system(_copy.format(src=src, dst=dst))
+def copy(cp, src, dst):
+    os.system(_copy.format(cp=cp, src=src, dst=dst))
+
 
 def mkdir(target):
     os.system("mkdir -p '{}'".format(target))
@@ -43,8 +43,10 @@ if __name__ == "__main__":
 
     parser.add_argument("input_dir")
     parser.add_argument("output_dir")
+    parser.add_argument("--copy", action="store_true", default=False, help="create copies instead of hard links (default: false)")
 
     args = parser.parse_args()
+    cp = "cp" if args.copy else "ln"
 
     files = list(glob(os.path.join(args.input_dir, "*.jpg")))
     num_items = len(files)
@@ -57,6 +59,6 @@ if __name__ == "__main__":
         if d is None:
             raise ValueError("unexpected file name {}".format(f))
         mkdir(os.path.dirname(dict_to_out(args.output_dir, "", d)))
-        copy(f, dict_to_out(args.output_dir, "", d))
+        copy(cp, f, dict_to_out(args.output_dir, "", d))
         convert(f, dict_to_out(args.output_dir, ".small.jpg", d), 0.01)
         convert(f, dict_to_out(args.output_dir, ".medium.jpg", d), 0.05)
